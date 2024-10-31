@@ -1,0 +1,14 @@
+{
+  "preprocess_image": {
+    "color_mode": "grayscale",
+    "resize_shape": [48, 48],
+    "normalize": true,
+    "scaling_factor": 255.0
+  },
+  "class_labels": [
+    "Marah 😡",
+    "Senang 😊",
+    "Netral 😐",
+    "Sedih 😢"
+  ]
+}
