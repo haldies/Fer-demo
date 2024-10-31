@@ -11,7 +11,6 @@ from transformers import ViTForImageClassification, AutoImageProcessor
 from safetensors.torch import load_file
 from PIL import ImageOps
 
-# Load TensorFlow model
 file_path = os.path.abspath('./model.h5')
 tf_model = load_model(file_path)
 
@@ -26,7 +25,7 @@ def preprocess_image_tf(image):
 
 
 def preprocess_image_hf(image):
-    """Preprocess image for Hugging Face model (resize to 224x224 and convert to RGB if needed)."""
+   
     if image.mode != 'RGB':
         image = image.convert('RGB')
     
@@ -56,7 +55,7 @@ class EmotionDetector:
         }
 
     def detect_emotion(self, image):
-        """Detect emotion in the image and return probabilities for each class."""
+        
         inputs = self.image_processor(images=image, return_tensors="pt")
 
         with torch.no_grad():
@@ -106,16 +105,16 @@ if image is not None:
         tf_predicted_class = tf_class_names[np.argmax(tf_prediction)]
         tf_probabilities = tf_prediction[0]
         st.subheader("Model dari haldies")
-        st.text("Model TensorFlow akurasi 72% dari CNN:")
+        st.write("Model TensorFlow akurasi 72% dari CNN:")
         st.write(f"Prediksi Emosi: {tf_predicted_class}")
         for class_name, prob in zip(tf_class_names, tf_probabilities):
             st.write(f"{class_name}: {prob * 100:.2f}%")
 
     with col2:
-        preprocessed_image_hf = preprocess_image_hf(image)  # Preprocess for Hugging Face
+        preprocessed_image_hf = preprocess_image_hf(image)  
         hf_predicted_label, hf_probabilities = emotion_detector.detect_emotion(preprocessed_image_hf)
         st.subheader("Model dari hungging face")
-        st.text("Model Hugging Face akurasi 90% Transfer learning ViT:")
+        st.write(f"Model Hugging Face akurasi 91% Transfer learning ViT: [sumber link](https://huggingface.co/dima806/facial_emotions_image_detection)")
         st.write(f"Prediksi Emosi: {hf_predicted_label}")
         for idx, (class_idx, prob) in enumerate(zip(emotion_detector.id2label.keys(), hf_probabilities)):
             st.write(f"{emotion_detector.id2label[class_idx]}: {prob * 100:.2f}%")
