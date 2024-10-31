@@ -34,8 +34,8 @@ if uploaded_file is not None:
     preprocessed_image = preprocess_image(image)
     prediction = model.predict(preprocessed_image)
 
-    class_names = ["Marah", "Jijik", "Takut",
-                   "Senang", "Sedih", "Terkejut", "Netral"]
+    class_names = ["Marah",  "Senang",
+                   "Netral",  "sedih"]
 
     predicted_class = class_names[np.argmax(prediction)]
     probabilities = prediction[0]
@@ -44,7 +44,7 @@ if uploaded_file is not None:
     for class_name, prob in zip(class_names, probabilities):
         st.write(f"{class_name}: {prob * 100:.2f}%")
 
-    stress_emotions = ["Marah", "Takut", "Sedih"]
+    stress_emotions = ["Marah", "Sedih"]
     stress_probability = sum(prob for class_name, prob in zip(
         class_names, probabilities) if class_name in stress_emotions)
 
