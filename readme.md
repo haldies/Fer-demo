@@ -30,9 +30,9 @@ The `preprocessing.json` file allows you to set the preprocessing parameters. He
 ### 1. Setup
 
 1. **Google drive clone link model**:
-   ```bash
+   
    link download [Download model](https://drive.google.com/uc?id=1YQT-g3gAZqWS1dRwumvZKiFsREsmxr-J)
-   ```
+   
 
 2. **Install TensorFlow.js** if you haven’t already:
    ```bash
