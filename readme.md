@@ -45,49 +45,6 @@ Use the provided JavaScript code (in `preprocess.js`) to load the configuration 
 
 #### Code Example
 
-Below is an example of how to use `preprocessing.json` in your JavaScript project.
-
-```javascript
-import * as tf from '@tensorflow/tfjs';
-
-// Function to load the JSON configuration
-async function loadConfig() {
-    const response = await fetch('preprocessing.json');
-    return await response.json();
-}
-
-// Function to preprocess the image using the loaded configuration
-async function preprocessImage(imageElement) {
-    const config = await loadConfig();  // Load the configuration JSON
-
-    // Step 1: Convert to Grayscale if specified
-    let processedImage = tf.browser.fromPixels(imageElement);
-    if (config.preprocess_image.color_mode === "grayscale") {
-        processedImage = tf.image.rgbToGrayscale(processedImage);
-    }
-
-    // Step 2: Resize the Image
-    const resizeShape = config.preprocess_image.resize_shape;
-    processedImage = tf.image.resizeBilinear(processedImage, resizeShape);
-
-    // Step 3: Normalize if specified
-    if (config.preprocess_image.normalize) {
-        processedImage = processedImage.div(config.preprocess_image.scaling_factor);
-    }
-
-    // Step 4: Expand dimensions to add a batch dimension
-    processedImage = processedImage.expandDims(0);
-
-    return processedImage;
-}
-
-// Example usage
-const imageElement = document.getElementById('input-image');  // Your image element
-preprocessImage(imageElement).then((preprocessedImage) => {
-    console.log(preprocessedImage.shape);  // Should be [1, 48, 48, 1] if grayscale and resized
-});
-```
-
 ### 3. Explanation of the Code
 
 1. **Grayscale Conversion**: Converts the image to grayscale if the `color_mode` is set to `"grayscale"`.
@@ -107,20 +64,6 @@ In JavaScript, load `class_labels` by accessing `config.class_labels` after load
 
 ### Sample Code to Display Class Labels
 
-```javascript
-async function getClassLabels() {
-    const config = await loadConfig();
-    const classLabels = config.class_labels;
-    console.log("Class Labels:", classLabels);
-    return classLabels;
-}
-
-getClassLabels().then((labels) => {
-    labels.forEach((label, index) => {
-        console.log(`Class ${index}: ${label}`);
-    });
-});
-```
 
 ## Usage Notes
 
