@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Preprocessing</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+</head>
+<body>
+    <h1>Image Preprocessing with TensorFlow.js</h1>
+    <input type="file" id="image-upload" accept="image/*">
+    <img id="input-image" src="" alt="Image Preview" style="display:none;">
+    <button id="predict-button" disabled>Predict</button>
+    <div id="prediction-result"></div> <!-- Display prediction result here -->
+
+    <script>
+        let model;
+
+        // Load the model
+        async function loadModel() {
+            model = await tf.loadLayersModel('./modeltfjs/model.json'); 
+            document.getElementById('predict-button').disabled = false; 
+        }
+
+        // Function to load the JSON configuration
+        async function loadConfig() {
+            const response = await fetch('./preprocessiing.json'); // Corrected the path
+            return await response.json();
+        }
+
+        // Function to preprocess the image
+        async function preprocessImage(imageElement) {
+            const config = await loadConfig();  // Load the configuration JSON
+
+            // Step 1: Convert to Grayscale if specified
+            let processedImage = tf.browser.fromPixels(imageElement);
+            if (config.preprocess_image.color_mode === "grayscale") {
+                processedImage = tf.image.rgbToGrayscale(processedImage);
+            }
+
+            // Step 2: Resize the Image
+            const resizeShape = config.preprocess_image.resize_shape;
+            processedImage = tf.image.resizeBilinear(processedImage, resizeShape);
+
+            // Step 3: Normalize if specified
+            if (config.preprocess_image.normalize) {
+                processedImage = processedImage.div(config.preprocess_image.scaling_factor);
+            }
+
+            // Step 4: Expand dimensions to add a batch dimension
+            processedImage = processedImage.expandDims(0);
+
+            return processedImage;
+        }
+
+    
+        document.getElementById('image-upload').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgElement = document.getElementById('input-image');
+                imgElement.src = e.target.result;
+                imgElement.style.display = 'block'; 
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('predict-button').addEventListener('click', async () => {
+            const imgElement = document.getElementById('input-image');
+            const preprocessedImage = await preprocessImage(imgElement); 
+            const prediction = model.predict(preprocessedImage); 
+            
+            const probabilities = prediction.dataSync(); 
+            displayProbabilities(probabilities); 
+        });
+
+       
+        function displayProbabilities(predictions) {
+            const classLabels = ["Marah 😡", "Senang 😊", "Netral 😐", "Sedih 😢"];
+            const predictionResult = document.getElementById('prediction-result');
+            predictionResult.innerHTML = ""; 
+            console.log(predictions);
+            
+            predictions.forEach((probability, index) => {
+                predictionResult.innerHTML += `${classLabels[index]}: ${(probability * 100).toFixed(2)}%<br>`;
+            });
+
+          
+
+            const maxIndex = predictions.indexOf(Math.max(...predictions)); 
+            predictionResult.innerHTML += `<strong>Predicted Class: ${classLabels[maxIndex]}</strong>`;
+        }
+
+        loadModel(); 
+    </script>
+</body>
+</html>

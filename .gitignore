@@ -1,1 +1,6 @@
-tfjs_target_dir.zip
+modeltfjs/
+modeltfjs.zip
+modelCKplus.h5
+modelfer2013.h5
+model.h5
+models/model.safetensors
