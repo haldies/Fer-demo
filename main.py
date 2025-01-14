@@ -14,17 +14,25 @@ model = AutoModelForImageClassification.from_pretrained(model_folder_path)
 
 # Model label mapping
 id2label = {
-    "0": "sad 😢",
-    "1": "disgust 🤢",
-    "2": "angry 😡",
-    "3": "neutral 😐",
-    "4": "fear 😱",
-    "5": "surprise 😲",
-    "6": "happy 😊"
+    "0": "angry 😡",
+    "1": "happy 😊",
+    "2": "neutral 😐",
+    "3": "sad 😢"
 }
+
+def preprocess_image(image):
+    # Pastikan gambar dalam format RGB
+    if image.mode != 'RGB':
+        image = image.convert('RGB')
+    
+    # Resize gambar ke 224x224
+    image = image.resize((224, 224))  # Sesuaikan dengan ukuran yang diharapkan model
+    
+    return image
 
 def detect_emotion(image):
     # Memproses gambar
+    image = preprocess_image(image)
     inputs = image_processor(images=image, return_tensors="pt")
     
     with torch.no_grad():
